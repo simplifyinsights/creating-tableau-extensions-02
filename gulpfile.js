@@ -31,6 +31,13 @@ gulp.task("build:html", function() {
         "css/bootstrap.min.css"
       )
     )
+    .pipe(replace("libs/chart.js/dist/Chart.min.js", "js/Chart.min.js"))
+    .pipe(
+      replace(
+        "js/tableau.extensions.1.latest.js",
+        "js/tableau.extensions.1.latest-min.js"
+      )
+    )
     .pipe(replace("libs/jquery/dist/jquery.min.js", "js/jquery.min.js"))
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(gulp.dest("dist"));
@@ -48,6 +55,18 @@ gulp.task("copy:jquery", function() {
     .pipe(gulp.dest("dist/js"));
 });
 
+gulp.task("copy:jquery", function() {
+  return gulp
+    .src("source/libs/jquery/dist/jquery.min.js")
+    .pipe(gulp.dest("dist/js"));
+});
+
+gulp.task("copy:chartjs", function() {
+  return gulp
+    .src("source/libs/chart.js/dist/Chart.min.js")
+    .pipe(gulp.dest("dist/js"));
+});
+
 gulp.task("watch", function() {
   gulp.watch("source/css/*.css", gulp.series("build:css"));
   gulp.watch("source/js/*.js", gulp.series("build:js"));
@@ -59,12 +78,15 @@ gulp.task("clean:dist", function() {
 });
 
 gulp.task(
-  "build:all",
+  "build:dist",
   gulp.parallel(
     "build:css",
     "build:js",
     "build:html",
     "copy:jquery",
-    "copy:bootstrap"
+    "copy:bootstrap",
+    "copy:chartjs"
   )
 );
+
+gulp.task("build:all", gulp.series("clean:dist", "build:dist"));
